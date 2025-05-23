@@ -1,0 +1,364 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Book Appointment - Yuks Nail Art</title>
+    <meta name="description" content="Book your nail art appointment at Yuks Nail Art" />
+    <meta name="author" content="Yuks Nail Art" />
+    <link href="https://fonts.googleapis.com/css2?family=Dancing+Script:wght@700&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+    
+    <meta property="og:title" content="Book Appointment - Yuks Nail Art" />
+    <meta property="og:description" content="Book your nail art appointment at Yuks Nail Art" />
+    <meta property="og:type" content="website" />
+    <meta property="og:image" content="" />
+
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:site" content="@lovable_dev" />
+    <meta name="twitter:image" content="" />
+
+    <style>
+      @tailwind base;
+      @tailwind components;
+      @tailwind utilities;
+      
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+      
+      body {
+        background-color: #000000;
+        color: #ffffff;
+        min-height: 100vh;
+        font-family: 'Inter', sans-serif;
+        overflow: hidden;
+      }
+      
+      body.loaded {
+        overflow: auto;
+      }
+
+      .preloader {
+        position: fixed;
+        inset: 0;
+        background: black;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        z-index: 9999;
+        transition: opacity 0.5s, visibility 0.5s;
+      }
+      
+      .preloader.fade-out {
+        opacity: 0;
+        visibility: hidden;
+      }
+      
+      .loader {
+        width: 48px;
+        height: 48px;
+        border: 4px solid #ffffff;
+        border-radius: 50%;  
+        border-top-color: transparent;
+        animation: spin 0.6s linear infinite;
+      }
+      
+      @keyframes spin {
+        100% {
+          transform: rotate(360deg);
+        }
+      }
+      
+      .loading-message {
+        margin-top: 20px;
+        color: white;
+        font-family: 'Dancing Script', cursive;
+        font-size: 1.5rem;
+        animation: pulse-glow 1.5s ease-in-out infinite;
+      }
+      
+      @keyframes pulse-glow {
+        0% { opacity: 0.4; }
+        50% { opacity: 1; }
+        100% { opacity: 0.4; }
+      }
+      
+      .loading-bar {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 3px;
+        background-color: #000;
+        z-index: 50;
+        transition: opacity 0.3s ease 1s;
+      }
+      
+      .loading-bar.complete {
+        opacity: 0;
+      }
+      
+      .loading-progress {
+        height: 100%;
+        background-color: #4ade80;
+        transition: width 0.4s ease;
+        width: 0%;
+      }
+      
+      .content-container {
+        min-height: 100vh;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 20px;
+        transition: opacity 0.5s;
+        opacity: 0;
+      }
+      
+      .content-container.visible {
+        opacity: 1;
+      }
+      
+      .booking-container {
+        width: 100%;
+        max-width: 600px;
+        padding: 3rem;
+      }
+      
+      .section-title {
+        font-family: 'Dancing Script', cursive;
+        font-size: 2.5rem;
+        text-align: center;
+        margin-bottom: 2rem;
+        color: #ffffff;
+        text-shadow: 0 0 10px rgba(255, 255, 255, 0.3);
+      }
+      
+      .form-group {
+        margin-bottom: 1.5rem;
+        opacity: 0;
+      }
+      
+      .form-group:nth-child(1) { animation: slide-in 0.5s ease forwards 0.1s; }
+      .form-group:nth-child(2) { animation: slide-in 0.5s ease forwards 0.2s; }
+      .form-group:nth-child(3) { animation: slide-in 0.5s ease forwards 0.3s; }
+      .form-group:nth-child(4) { animation: slide-in 0.5s ease forwards 0.4s; }
+      
+      @keyframes slide-in {
+        0% {
+          opacity: 0;
+          transform: translateX(-20px);
+        }
+        100% {
+          opacity: 1;
+          transform: translateX(0);
+        }
+      }
+      
+      label {
+        display: block;
+        margin-bottom: 0.5rem;
+        color: #ffffff;
+        font-size: 0.875rem;
+        letter-spacing: 0.05em;
+        text-transform: uppercase;
+      }
+      
+      input {
+        width: 100%;
+        padding: 0.75rem;
+        background: rgba(255, 255, 255, 0.05);
+        border: 1px solid rgba(255, 255, 255, 0.2);
+        border-radius: 0.5rem;
+        color: #ffffff;
+        transition: all 0.3s;
+      }
+      
+      input:focus {
+        outline: none;
+        border-color: #ffffff;
+        box-shadow: 0 0 10px rgba(255, 255, 255, 0.2);
+      }
+      
+      input[type="date"] {
+        color-scheme: dark;
+      }
+      
+      button {
+        width: 100%;
+        margin-top: 1.5rem;
+        padding: 1rem;
+        background: transparent;
+        border: 2px solid #ffffff;
+        color: #ffffff;
+        border-radius: 0.5rem;
+        cursor: pointer;
+        font-size: 1rem;
+        letter-spacing: 0.05em;
+        text-transform: uppercase;
+        transition: all 0.3s;
+      }
+      
+      button:hover {
+        background: #ffffff;
+        color: #000000;
+        box-shadow: 0 0 20px rgba(255, 255, 255, 0.4);
+      }
+      
+      button:active {
+        transform: scale(0.98);
+      }
+      
+      button:disabled {
+        opacity: 0.5;
+        cursor: not-allowed;
+      }
+
+      .toast {
+        position: fixed;
+        bottom: 20px;
+        right: 20px;
+        background-color: rgba(0, 0, 0, 0.8);
+        color: white;
+        padding: 12px 20px;
+        border-radius: 8px;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+        opacity: 0;
+        transition: opacity 0.3s;
+        z-index: 100;
+      }
+      
+      .toast.visible {
+        opacity: 1;
+      }
+      
+      @media (max-width: 640px) {
+        .booking-container {
+          padding: 1.5rem;
+        }
+        
+        .section-title {
+          font-size: 2rem;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="preloader">
+      <div class="loader"></div>
+      <p class="loading-message">Creating beauty, please wait...</p>
+    </div>
+    
+    <div class="loading-bar">
+      <div class="loading-progress"></div>
+    </div>
+    
+    <div class="content-container">
+      <div class="booking-container">
+        <h1 class="section-title">Book Your Session</h1>
+        
+        <form id="bookingForm">
+          <div class="form-group">
+            <label for="name">YOUR NAME</label>
+            <input type="text" id="name" required placeholder="Enter your full name">
+          </div>
+
+          <div class="form-group">
+            <label for="email">YOUR EMAIL</label>
+            <input type="email" id="email" required placeholder="Enter your email address">
+          </div>
+
+          <div class="form-group">
+            <label for="contact">CONTACT NUMBER</label>
+            <input type="tel" id="contact" required placeholder="Enter your phone number">
+          </div>
+
+          <div class="form-group">
+            <label for="date">PREFERRED DATE</label>
+            <input type="date" id="date" required>
+          </div>
+
+          <button type="submit" id="submitBtn">Book Now</button>
+        </form>
+      </div>
+    </div>
+    
+    <div id="toast" class="toast">Booking successful! We will contact you shortly to confirm your appointment.</div>
+    
+    <script>
+      // Preloader functionality
+      window.addEventListener('load', function() {
+        setTimeout(function() {
+          const preloader = document.querySelector('.preloader');
+          const body = document.body;
+          const contentContainer = document.querySelector('.content-container');
+          
+          preloader.classList.add('fade-out');
+          body.classList.add('loaded');
+          contentContainer.classList.add('visible');
+          
+          setTimeout(function() {
+            preloader.style.display = 'none';
+          }, 500);
+        }, 1500);
+      });
+      
+      // Loading bar functionality
+      document.addEventListener('DOMContentLoaded', function() {
+        const loadingBar = document.querySelector('.loading-bar');
+        const progress = document.querySelector('.loading-progress');
+        
+        let width = 0;
+        const interval = setInterval(() => {
+          if (width >= 100) {
+            clearInterval(interval);
+            loadingBar.classList.add('complete');
+          } else {
+            width += Math.random() * 25;
+            if (width > 100) width = 100;
+            progress.style.width = width + '%';
+          }
+        }, 200);
+      });
+      
+      // Form submission
+      const form = document.getElementById('bookingForm');
+      const submitBtn = document.getElementById('submitBtn');
+      const toast = document.getElementById('toast');
+      
+      form.addEventListener('submit', function(e) {
+        e.preventDefault();
+        
+        // Disable button and show loading state
+        submitBtn.disabled = true;
+        submitBtn.textContent = 'Booking...';
+        
+        // Simulate form submission
+        setTimeout(() => {
+          // Show success toast
+          toast.classList.add('visible');
+          
+          // Reset form
+          form.reset();
+          
+          // Reset button
+          submitBtn.disabled = false;
+          submitBtn.textContent = 'Book Now';
+          
+          // Hide toast after 3 seconds
+          setTimeout(() => {
+            toast.classList.remove('visible');
+          }, 3000);
+        }, 1000);
+      });
+      
+      // Set min date for date input to today
+      const dateInput = document.getElementById('date');
+      const today = new Date().toISOString().split('T')[0];
+      dateInput.min = today;
+    </script>
+  </body>
+</html>
